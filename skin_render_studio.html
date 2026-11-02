@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skin Render Studio — Minecraft</title>
+<style>
+:root{--bg:#11131b;--panel:#1b1e2a;--panel2:#242838;--text:#f2f4fb;--muted:#a7aec4;--accent:#a78bfa;--line:#34394d}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#24213c 0,#11131b 48%);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;color:var(--text);min-height:100vh}
+header{padding:28px 22px 18px;max-width:1400px;margin:auto}h1{margin:0;font-size:clamp(25px,4vw,38px);letter-spacing:-.04em}h1 span{color:var(--accent)}header p{margin:8px 0 0;color:var(--muted)}
+main{max-width:1400px;margin:auto;padding:0 22px 40px;display:grid;grid-template-columns:320px 1fr;gap:18px}
+.panel{background:rgba(27,30,42,.94);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 12px 36px #0002}.panel h2{font-size:15px;margin:0 0 14px;text-transform:uppercase;letter-spacing:.09em;color:#d9d4ff}
+label{display:block;font-size:13px;color:var(--muted);margin:14px 0 7px}input[type=text],input[type=number],select{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:9px;background:#121520;color:var(--text);outline:none}input[type=color]{width:100%;height:40px;border:1px solid var(--line);border-radius:9px;background:#121520;padding:4px}
+input[type=file]{display:block;width:100%;font-size:12px;color:var(--muted)}.drop{border:1px dashed #7165a5;border-radius:12px;padding:16px;background:#a78bfa0b;text-align:center}.drop strong{display:block;margin-bottom:5px}.drop small{color:var(--muted);line-height:1.4}
+button{border:0;border-radius:10px;padding:11px 13px;font-weight:700;cursor:pointer;transition:.15s}button:hover{transform:translateY(-1px);filter:brightness(1.08)}.primary{background:var(--accent);color:#171324;width:100%;margin-top:15px}.secondary{background:#30364b;color:var(--text)}.danger{background:#482c3b;color:#ffdbe8}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hint{font-size:12px;line-height:1.5;color:var(--muted);margin-top:12px}.status{font-size:12px;color:#c8bfff;min-height:18px;margin-top:10px}
+.previewhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}.previewhead h2{margin:0}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{padding:9px 12px}.grid{display:grid;grid-template-columns:repeat(5,minmax(115px,1fr));gap:12px}.card{min-width:0;background:#e5e0f5;border:1px solid #c7c0db;border-radius:10px;color:#15121d;padding:8px 7px 10px;text-align:center;overflow:hidden}.skinview{height:220px;width:100%;display:block;cursor:grab}.skinview:active{cursor:grabbing}.skinname{width:100%;border:0!important;background:transparent!important;color:#15121d!important;font-weight:800;text-align:center;font-size:18px;padding:3px!important}.skinmeta{font-size:12px;color:#373044;margin-top:1px}.cardtools{display:flex;justify-content:center;gap:5px;margin-top:6px}.cardtools button{font-size:11px;padding:5px 7px;background:#d2c9e8;color:#20182f}.empty{padding:48px 20px;text-align:center;border:1px dashed var(--line);border-radius:12px;color:var(--muted)}.empty b{display:block;color:var(--text);font-size:18px;margin-bottom:8px}
+@media(max-width:1000px){main{grid-template-columns:1fr}.grid{grid-template-columns:repeat(4,minmax(110px,1fr))}}
+@media(max-width:650px){header{padding:22px 15px 15px}main{padding:0 15px 28px}.grid{grid-template-columns:repeat(2,minmax(120px,1fr))}.skinview{height:210px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Skin Render <span>Studio</span></h1>
+  <p>Renderizá varias skins de Minecraft en una sola imagen, con nombres y diseño personalizable.</p>
+</header>
+<main>
+  <aside class="panel">
+    <h2>1. Tus skins</h2>
+    <div class="drop">
+      <strong>Subí archivos PNG</strong>
+      <small>Podés seleccionar varias skins a la vez. Se procesan en tu navegador.</small>
+      <label for="files">Archivos de skins</label>
+      <input id="files" type="file" accept="image/png,.png" multiple>
+    </div>
+    <label for="prefix">Nombre automático</label>
+    <input id="prefix" type="text" value="Alex" placeholder="Ej. Alex">
+    <div class="row">
+      <div><label for="start">Empezar en</label><input id="start" type="number" min="1" value="1"></div>
+      <div><label for="columns">Columnas</label><select id="columns"><option>3</option><option>4</option><option selected>5</option><option>6</option></select></div>
+    </div>
+    <button id="rename" class="secondary" style="width:100%;margin-top:10px">Renombrar todas</button>
+    <label for="bg">Fondo de los renders</label><input id="bg" type="color" value="#e5e0f5">
+    <label for="title">Título de la imagen (opcional)</label><input id="title" type="text" placeholder="Ej. EVERYDAY STREETWEAR">
+    <label for="size">Tamaño de exportación</label><select id="size"><option value="1">Normal (1×)</option><option value="2" selected>Alta calidad (2×)</option><option value="3">Muy alta calidad (3×)</option></select>
+    <button id="export" class="primary">Exportar imagen PNG</button>
+    <button id="clear" class="secondary" style="width:100%;margin-top:8px">Eliminar todas las skins</button>
+    <div id="status" class="status"></div>
+    <p class="hint">Consejo: para un resultado como tu ejemplo, probá 5 columnas, fondo lila claro y nombres tipo “1 Alex”, “2 Alex”, etc. Para usar la página necesitás conexión a internet porque carga la librería de render 3D.</p>
+  </aside>
+  <section class="panel">
+    <div class="previewhead"><h2>2. Vista previa</h2><div class="actions"><button id="selectall" class="secondary">Seleccionar más skins</button></div></div>
+    <div id="empty" class="empty"><b>Todavía no hay skins</b>Subí archivos PNG para empezar a generar los renders.</div>
+    <div id="grid" class="grid"></div>
+  </section>
+</main>
+<script type="module">
+import * as skinview3d from "https://cdn.jsdelivr.net/npm/skinview3d@3.4.2/+esm";
+const fileInput=document.getElementById('files'), grid=document.getElementById('grid'), empty=document.getElementById('empty'), status=document.getElementById('status');
+let skins=[], nextId=1;
+const setStatus=t=>status.textContent=t;
+function updateGrid(){
+  grid.style.gridTemplateColumns=`repeat(${document.getElementById('columns').value},minmax(0,1fr))`;
+  empty.style.display=skins.length?'none':'block';
+}
+function setCardName(s,name){s.name=name;s.nameInput.value=name;}
+function addSkin(file){
+  if(!file.type.includes('png')&&!file.name.toLowerCase().endsWith('.png'))return;
+  const url=URL.createObjectURL(file), id=nextId++;
+  const item={id,file,url,name:`${document.getElementById('start').value} ${document.getElementById('prefix').value||'Alex'}`};
+  const card=document.createElement('article');card.className='card';
+  const canvas=document.createElement('canvas');canvas.className='skinview';canvas.width=220;canvas.height=260;
+  const name=document.createElement('input');name.type='text';name.className='skinname';name.value=item.name;name.setAttribute('aria-label','Nombre del skin');
+  const meta=document.createElement('div');meta.className='skinmeta';meta.textContent='skin — 3D';
+  const tools=document.createElement('div');tools.className='cardtools';
+  const rotate=document.createElement('button');rotate.textContent='Girar';
+  const remove=document.createElement('button');remove.textContent='Quitar';
+  tools.append(rotate,remove);card.append(canvas,name,meta,tools);grid.append(card);
+  item.card=card;item.canvas=canvas;item.nameInput=name;
+  name.addEventListener('input',()=>item.name=name.value);
+  remove.addEventListener('click',()=>{item.viewer?.dispose();URL.revokeObjectURL(item.url);skins=skins.filter(x=>x.id!==id);card.remove();updateGrid();});
+  let rotated=false;rotate.addEventListener('click',()=>{rotated=!rotated;item.viewer.camera.position.set(rotated? -28:28,18,45);item.viewer.camera.lookAt(0,16,0);item.viewer.renderer.render(item.viewer.scene,item.viewer.camera);});
+  const viewer=new skinview3d.SkinViewer({canvas,width:220,height:260,skin:url,zoom:0.78, fov:32, background:document.getElementById('bg').value});
+  item.viewer=viewer;viewer.animation=null;viewer.controls.enableRotate=true;viewer.controls.enableZoom=false;
+  viewer.camera.position.set(28,18,45);viewer.camera.lookAt(0,16,0);
+  skins.push(item);updateGrid();
+}
+fileInput.addEventListener('change',async e=>{
+  const files=[...e.target.files].filter(f=>f.name.toLowerCase().endsWith('.png'));
+  if(!files.length){setStatus('Elegí archivos PNG válidos.');return;}
+  setStatus(`Cargando ${files.length} skin(s)…`);
+  for(const f of files){addSkin(f);await new Promise(r=>setTimeout(r,40));}
+  setStatus(`${skins.length} skin(s) cargadas. Podés editar cada nombre.`);
+  fileInput.value='';
+});
+document.getElementById('selectall').addEventListener('click',()=>fileInput.click());
+document.getElementById('columns').addEventListener('change',updateGrid);
+document.getElementById('bg').addEventListener('input',e=>{skins.forEach(s=>{s.viewer.background=parseInt(e.target.value.slice(1),16);s.viewer.renderer.render(s.viewer.scene,s.viewer.camera);});});
+document.getElementById('rename').addEventListener('click',()=>{
+  const prefix=document.getElementById('prefix').value||'Alex',start=Number(document.getElementById('start').value)||1;
+  skins.forEach((s,i)=>setCardName(s,`${start+i} ${prefix}`));setStatus('Nombres actualizados.');
+});
+document.getElementById('clear').addEventListener('click',()=>{
+  skins.forEach(s=>{s.viewer?.dispose();URL.revokeObjectURL(s.url);s.card.remove();});skins=[];updateGrid();setStatus('');
+});
+document.getElementById('export').addEventListener('click',async()=>{
+  if(!skins.length){setStatus('Primero subí al menos una skin.');return;}
+  setStatus('Preparando imagen…');
+  await new Promise(r=>setTimeout(r,200));
+  const scale=Number(document.getElementById('size').value)||2,cols=Number(document.getElementById('columns').value)||5;
+  const cellW=220,cellH=310,pad=20,title=document.getElementById('title').value.trim();
+  const rows=Math.ceil(skins.length/cols),titleH=title?66:18;
+  const out=document.createElement('canvas');out.width=(cols*cellW+pad*2)*scale;out.height=(rows*cellH+pad*2+titleH)*scale;
+  const ctx=out.getContext('2d');ctx.scale(scale,scale);ctx.fillStyle=document.getElementById('bg').value;ctx.fillRect(0,0,out.width/scale,out.height/scale);
+  if(title){ctx.fillStyle='#17131f';ctx.font='bold 27px Arial';ctx.textAlign='center';ctx.fillText(title,(cols*cellW+pad*2)/2,43);}
+  for(let i=0;i<skins.length;i++){
+    const s=skins[i];s.viewer.renderer.render(s.viewer.scene,s.viewer.camera);
+    const x=pad+(i%cols)*cellW,y=pad+titleH+Math.floor(i/cols)*cellH;
+    // Use the live 3D canvas for each skin.
+    ctx.drawImage(s.canvas,x+10,y,cellW-20,cellH-75);
+    ctx.fillStyle='#111';ctx.textAlign='center';ctx.font='bold 25px Arial';ctx.fillText(s.name||'',x+cellW/2,y+cellH-39,cellW-8);
+    ctx.fillStyle='#292536';ctx.font='20px Arial';ctx.fillText('slim — SD',x+cellW/2,y+cellH-12,cellW-8);
+  }
+  const a=document.createElement('a');a.download='minecraft-skin-renders.png';a.href=out.toDataURL('image/png');a.click();
+  setStatus('¡Imagen PNG exportada!');
+});
+updateGrid();
+</script>
+</body>
+</html>
